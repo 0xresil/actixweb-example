@@ -12,7 +12,7 @@ async fn greet(req: HttpRequest) -> Result<impl Responder> {
   if name == "Error" {
     Err(actix_web::error::ErrorInternalServerError("an error"))
   } else {
-    Ok(web::Json(Person { name: "Jack Poon".to_string(), age: 28}))
+    Ok(web::Json(Person { name: name.to_string(), age: 28}))
   }
 }         
 
@@ -43,9 +43,9 @@ mod tests {
     )
     .await;
 
-    let req = test::TestRequest::get().uri("/mundo").to_request();
+    let req = test::TestRequest::get().uri("/Jack-Poon").to_request();
     let resp = test::read_response(&mut app, req).await;
 
-    assert!(resp, Bytes::from_static(b"welcome"));
+    assert_eq!(resp, serde_json::to_vec(&Person { name: "Jack-Poon".to_string(), age: 28}).unwrap());
   }
 }
